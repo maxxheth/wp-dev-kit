@@ -5,14 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "jasmine",
-    "buildCommandModern": "NODE_ENV=production webpack --config webpack.config.modern.js",
+    "buildCommandModern": "BROWSERSLIST_ENV=modern NODE_ENV=production webpack --config webpack.config.js",
     "buildModern": "npm run clearJSModernDist && npm run clearCSSDist && npm run buildCommandModern",
-    "devCommandModern": "NODE_ENV=development webpack --config webpack.config.modern.js",
-    "devModern": "npm run clearJSModernDist && npm run clearCSSDist && npm run devCommandModern",
-    "buildCommandLegacy": "webpack --config webpack.config.legacy.js",
+    "devCommandModern": "BROWSERSLIST_ENV=modern NODE_ENV=development webpack --config webpack.config.js",
+    "devModern": "npm run fix && npm run clearJSModernDist && npm run clearCSSDist && npm run devCommandModern",
+    "buildCommandLegacy": "BROWSERSLIST_ENV=legacy NODE_ENV=production webpack --config webpack.config.js",
     "buildLegacy": "npm run clearJSLegacyDist && npm run buildCommandLegacy",
-    "devCommandLegacy": "webpack --config webpack.config.legacy.js",
-    "devLegacy": "npm run clearJSLegacyDist && npm run devCommandLegacy",
+    "devCommandLegacy": "BROWSERSLIST_ENV=legacy NODE_ENV=development webpack --config webpack.config.js",
+    "devLegacy": "npm run fix && npm run clearJSLegacyDist && npm run devCommandLegacy",
     "build": "npm run buildModern && npm run buildLegacy",
     "fix": "find ./assets/js/src -type f -name \"*.js\" -exec eslint --fix {} \\;",
     "watch": "node browsersync.js",
@@ -21,18 +21,18 @@
     "clearCSSDist": "rm -rf ./assets/scss/dist/*.css*"
   },
   "devDependencies": {
-    "@babel/cli": "^7.12.8",
-    "@babel/core": "^7.12.9",
-    "@babel/plugin-transform-runtime": "^7.12.1",
-    "@babel/preset-env": "^7.12.7",
-    "@babel/register": "^7.12.1",
-    "autoprefixer": "^10.0.4",
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-transform-runtime": "^7.12.10",
+    "@babel/preset-env": "^7.12.10",
+    "@babel/register": "^7.12.10",
+    "autoprefixer": "^10.1.0",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
+    "babel-preset-minify": "^0.5.1",
     "browser-sync": "^2.26.13",
-    "bs-platform": "^8.3.3",
-    "core-js": "^3.8.0",
+    "core-js": "^3.8.1",
     "css-loader": "^5.0.1",
     "cssnano": "^4.1.10",
     "dart-sass": "^1.25.0",
@@ -42,18 +42,20 @@
     "extract-loader": "^5.1.0",
     "fibers": "^5.0.0",
     "file-loader": "^6.2.0",
-    "mini-css-extract-plugin": "^1.3.1",
-    "postcss": "^8.1.10",
+    "mini-css-extract-plugin": "^1.3.3",
+    "postcss": "^8.2.1",
     "postcss-cli": "^8.3.0",
     "postcss-import": "^13.0.0",
     "postcss-loader": "^4.1.0",
+    "postcss-preset-env": "^6.7.0",
     "resolve-url-loader": "^3.1.2",
-    "sass": "^1.29.0",
+    "sass": "^1.30.0",
     "sass-loader": "^10.1.0",
     "style-loader": "^2.0.0",
     "stylelint": "^13.8.0",
     "stylelint-config-recommended": "^3.0.0",
-    "webpack": "^5.9.0",
+    "terser-webpack-plugin": "^5.0.3",
+    "webpack": "^5.10.1",
     "webpack-babel-env-deps": "^1.6.3",
     "webpack-cli": "^4.2.0",
     "webpack-dev-server": "^3.11.0"
@@ -72,9 +74,17 @@
     "tippy.js": "^6.2.7",
     "whatwg-fetch": "^3.5.0"
   },
-  "browserslist": [
-    "> 0.25%, not dead"
-  ],
+  "browserslist": {
+    "modern": [
+      "supports es6-module",
+      "not dead",
+      "last 2 versions"
+    ],
+    "legacy": [
+      "since 2015",
+      "ie 11"
+    ]
+  },
   "quokka": {
     "babel": true
   }
